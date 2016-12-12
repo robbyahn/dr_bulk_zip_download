@@ -1,0 +1,36 @@
+
+<?php
+
+//function to zip and force download the files using PHP
+function zipFilesAndDownload($file_names,$archive_file_name,$file_path)
+{
+	$zip = new ZipArchive();
+	//create the file and throw the error if unsuccessful
+	if ($zip->open($file_path."sites/default/files/".$archive_file_name, ZIPARCHIVE::CREATE )!==TRUE) {
+    	exit("cannot open <$archive_file_name>\n");
+	}
+	//add each files of $file_name array to archive
+	foreach($file_names as $files)
+	{
+  		if(!empty($files))
+		{			
+			$file=str_replace("sites/default/files/","",$files);
+			
+			$zip->addFile($file_path.$files,$file);
+		}
+	}
+	$zip->close();
+	echo "sites/default/files/".$archive_file_name;
+}
+
+
+
+if($_GET['documents'])
+{
+	$documents=explode(",",$_GET['documents']);
+	
+	$file_names=$documents;
+	$archive_file_name='zipped-'.time().'.zip';
+	$file_path=$_SERVER['DOCUMENT_ROOT'].'/';
+	zipFilesAndDownload($file_names,$archive_file_name,$file_path);
+}
